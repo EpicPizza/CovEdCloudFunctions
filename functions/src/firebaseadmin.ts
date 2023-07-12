@@ -1,7 +1,7 @@
 import admin from 'firebase-admin'
 import FirebaseAdmin from 'firebase-admin';
 const firebaseAuth = FirebaseAdmin.auth;
-import type { Auth, DecodedIdToken, UserRecord } from 'firebase-admin/auth';
+import type { Auth } from 'firebase-admin/auth';
 import { type Firestore, getFirestore as getFirebaseFirestore } from 'firebase-admin/firestore';
 export let firebaseAdmin = getFirebaseAdmin();
 
@@ -13,13 +13,9 @@ function getFirebaseAdmin() {
     const getFirebaseApp = (): admin.app.App => {
         if(app == undefined) { 
             if(admin.apps == null) {
-                app = admin.initializeApp({
-                    credential: (admin.credential.cert(JSON.parse(process.env.FIREBASE_ADMIN as string) as admin.ServiceAccount))
-                }, "Server");
+                app = admin.initializeApp({}, "Server");
             } else if(admin.apps.length == 0) {
-                app = admin.initializeApp({
-                    credential: (admin.credential.cert(JSON.parse(process.env.FIREBASE_ADMIN as string) as admin.ServiceAccount))
-                }, "Server");
+                app = admin.initializeApp({}, "Server");
             } else {
                 var found = false;
                 for(var i = 0; i < admin.apps.length; i++) {

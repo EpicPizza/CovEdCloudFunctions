@@ -1,11 +1,12 @@
 import dotenv from 'dotenv';
 import { z } from 'zod';
 import { firebaseAdmin } from './firebaseadmin';
+import * as logger from "firebase-functions/logger";
 dotenv.config();
 
-const Request = z.object({ //preliminary request object, not final
+export const Request = z.object({ //preliminary request object, not final
     uid: z.string().min(1).max(100),
-    type: z.string().regex(/^mentor$/).or(z.string().regex(/^mentee$/)),
+    type: z.string().regex(/^Mentor$/).or(z.string().regex(/^Mentee$/)),
 })
 
 const Mentee = z.object({ //not necessarily everything, just all the stuff i need for the matching algorithm
@@ -34,7 +35,7 @@ interface ScoreMentee extends z.infer<typeof Mentee> { //same
     score: number,
 }
 
-async function findMatches(request: z.infer<typeof Request>) { //this would be the function used in the cloud function
+export async function findMatches(request: z.infer<typeof Request>) { //this would be the function used in the cloud function
     if(request.type == 'mentee') {
         let ref = firebaseAdmin.getFirestore().collection('mentees').doc(request.uid);
 
@@ -60,6 +61,8 @@ async function findMatches(request: z.infer<typeof Request>) { //this would be t
         let unparsedMentor = (await ref.get()).data();
         if(!unparsedMentor) throw new Error("Menee Not Found");
         unparsedMentor.uid = ref.id;
+        unparsedMentor.created_at = unparsedMentor.created_at.toDate();
+        logger.log(unparsedMentor);
         let mentor = Mentor.parse(unparsedMentor);
 
         let refs = await firebaseAdmin.getFirestore().collection('mentees').listDocuments();
@@ -70,8 +73,12 @@ async function findMatches(request: z.infer<typeof Request>) { //this would be t
             let unparsedMentee = (await refs[i].get()).data();
             if(!unparsedMentee) throw new Error("Mentor Not Found");
             unparsedMentee.uid = refs[i].id;
+            unparsedMentee.created_at = unparsedMentee.created_at.toDate();
+            logger.log(unparsedMentee);
             mentees.push(Mentee.parse(unparsedMentee));
         }
+
+        logger.log("Done Parsing");
 
         return matchMentor(mentor as ScoreMentor, mentees as ScoreMentee[]);
     }
@@ -83,13 +90,23 @@ function matchMentee(mentee: ScoreMentee, mentors: ScoreMentor[]) {
         mentors[i].score = 0;
     }
 
+    logger.log("Reseted Score");
+
     let unmatchedMentors = splitUnmatchedMentors(mentors); //for now just disregarding onboarded members, we should discuss this behavior.
+
+    logger.log("Split mentors");
 
     waitCheckMentors(unmatchedMentors);
 
+    logger.log("Wait Checked Mentors");
+
     subjectMatchMentee(mentee, unmatchedMentors);
 
+    logger.log("Subject Matched Mentee");
+
     ageMatchmakingMentee(mentee, unmatchedMentors); //goes through scoring all the mentors.
+
+    logger.log("Age Matched Mentee");
 
     unmatchedMentors.sort((a, b) => { //sorts and returns string array of ids, 0 being best match, and so on
         if(a.score > b.score) {
@@ -102,6 +119,8 @@ function matchMentee(mentee: ScoreMentee, mentors: ScoreMentor[]) {
 
         return 0;
     })
+
+    logger.log("Done sorting.");
 
     let matches = new Array<string>()
 
