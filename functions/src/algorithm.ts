@@ -36,21 +36,24 @@ interface ScoreMentee extends z.infer<typeof Mentee> { //same
 }
 
 export async function findMatches(request: z.infer<typeof Request>) { //this would be the function used in the cloud function
-    if(request.type == 'mentee') {
+    if(request.type == 'Mentee') {
         let ref = firebaseAdmin.getFirestore().collection('mentees').doc(request.uid);
 
         let unparsedMentee = (await ref.get()).data();
-        if(!unparsedMentee) throw new Error("Menee Not Found");
+        if(!unparsedMentee) throw new Error("Mentee Not Found");
         unparsedMentee.uid = ref.id; //put it in before parsing, otherwise zod will throw error.
+        unparsedMentee.created_at = unparsedMentee.created_at.toDate(); //EEROREORORORORORRROOOOOR
         let mentee = Mentee.parse(unparsedMentee);
 
         let refs = await firebaseAdmin.getFirestore().collection('mentors').listDocuments();
+
         let mentors = new Array<z.infer<typeof Mentor>>();
 
         for(let i = 0; i < refs.length; i++) { //exactly the same as parsing mentee
             let unparsedMentor = (await refs[i].get()).data();
             if(!unparsedMentor) throw new Error("Mentor Not Found");
             unparsedMentor.uid = refs[i].id;
+            unparsedMentor.created_at = unparsedMentor.created_at.toDate(); //EEROREORORORORORRROOOOOR
             mentors.push(Mentor.parse(unparsedMentor));
         }
 
@@ -59,10 +62,9 @@ export async function findMatches(request: z.infer<typeof Request>) { //this wou
         let ref = firebaseAdmin.getFirestore().collection('mentors').doc(request.uid);
 
         let unparsedMentor = (await ref.get()).data();
-        if(!unparsedMentor) throw new Error("Menee Not Found");
+        if(!unparsedMentor) throw new Error("Mentor Not Found");
         unparsedMentor.uid = ref.id;
-        unparsedMentor.created_at = unparsedMentor.created_at.toDate();
-        logger.log(unparsedMentor);
+        unparsedMentor.created_at = unparsedMentor.created_at.toDate(); //EEROREORORORORORRROOOOOR
         let mentor = Mentor.parse(unparsedMentor);
 
         let refs = await firebaseAdmin.getFirestore().collection('mentees').listDocuments();
@@ -73,8 +75,7 @@ export async function findMatches(request: z.infer<typeof Request>) { //this wou
             let unparsedMentee = (await refs[i].get()).data();
             if(!unparsedMentee) throw new Error("Mentor Not Found");
             unparsedMentee.uid = refs[i].id;
-            unparsedMentee.created_at = unparsedMentee.created_at.toDate();
-            logger.log(unparsedMentee);
+            unparsedMentee.created_at = unparsedMentee.created_at.toDate(); //EEROREORORORORORRROOOOOR
             mentees.push(Mentee.parse(unparsedMentee));
         }
 
@@ -85,6 +86,7 @@ export async function findMatches(request: z.infer<typeof Request>) { //this wou
 }
 
 function matchMentee(mentee: ScoreMentee, mentors: ScoreMentor[]) {
+    
     mentee.score = 0; //reseting score
     for(let i = 0; i < mentors.length; i++) {
         mentors[i].score = 0;
@@ -128,22 +130,39 @@ function matchMentee(mentee: ScoreMentee, mentors: ScoreMentor[]) {
         matches.push(unmatchedMentors[i].uid);
     }
 
+    logger.log("Done formatting");
+
     return matches;
 } 
 
 function matchMentor(mentor: ScoreMentor, mentees: ScoreMentee[]) { //similar to matchMentee function
+    logger.log(mentor)
+    logger.log(mentees.length);
+
     mentor.score = 0; //reseting score
     for(let i = 0; i < mentees.length; i++) {
         mentees[i].score = 0;
     }
 
+    logger.log("Reseted Score");
+
     let unmatchedMentees = splitUnmatchedMentees(mentees);
+
+    logger.log(unmatchedMentees.length);
+
+    logger.log("Split mentors");
 
     waitCheckMentees(unmatchedMentees);
 
+    logger.log("Wait Checked Mentors");
+
     subjectMatchMentor(mentor, unmatchedMentees);
 
+    logger.log("Subject Matched Mentee");
+
     ageMatchmakingMentor(mentor, unmatchedMentees);
+
+    logger.log("Age Matched Mentee");
 
     unmatchedMentees.sort((a, b) => {
         if(a.score > b.score) {
@@ -157,11 +176,15 @@ function matchMentor(mentor: ScoreMentor, mentees: ScoreMentee[]) { //similar to
         return 0;
     })
 
+    logger.log("Done sorting.");
+
     let matches = new Array<string>()
 
     for(let i = 0; i < unmatchedMentees.length; i++) {
         matches.push(unmatchedMentees[i].uid);
     }
+
+    logger.log("Done formatting");
 
     return matches;
 }   
@@ -187,10 +210,8 @@ function ageMatchmakingMentor(mentor: ScoreMentor, menteeList: ScoreMentee[]){
 function subjectMatchMentor(mentor: ScoreMentor, menteeList: ScoreMentee[]){ //for now weights all subjects evenly, 
     for(let mentee = 0; mentee < menteeList.length; mentee++){
         for(let mentorSubject = 0; mentorSubject < mentor.subjects.length; mentorSubject++){
-            let menteeSubject = 0;
-            while(menteeSubject < menteeList[mentee].subjects.length) {
-                mentorSubject++;
-                let cycleCounter = 0; //feel like this could be a for loop, im going to ask patrick why he did it this way
+            let cycleCounter = 0; //feel like this could be a for loop, im going to ask patrick why he did it this way
+            for(let menteeSubject = 0; menteeSubject < menteeList[mentee].subjects.length; menteeSubject++) {
                 if(menteeList[mentee].subjects[mentorSubject] === mentor.subjects[menteeSubject]) {
                     if (cycleCounter == 0){
                         menteeList[mentee].score+=30;
@@ -204,8 +225,8 @@ function subjectMatchMentor(mentor: ScoreMentor, menteeList: ScoreMentee[]){ //f
                     else {
                         menteeList[mentee].score+=10;
                     }
-                }
-                cycleCounter += 1;    
+                    cycleCounter += 1; 
+                }   
             }
         }
     }
@@ -214,10 +235,8 @@ function subjectMatchMentor(mentor: ScoreMentor, menteeList: ScoreMentee[]){ //f
 function subjectMatchMentee(mentee: ScoreMentee, mentorList: ScoreMentor[]){
     for(let mentor = 0; mentor < mentorList.length; mentor++){
         for(let menteeSubject = 0; menteeSubject < mentee.subjects.length; menteeSubject++){
-            let mentorSubject = 0;
-            while(mentorSubject < mentorList[mentor].subjects.length) {
-                mentorSubject++;
-                let cycleCounter = 0; 
+            let cycleCounter = 0; 
+            for(let mentorSubject = 0; mentorSubject < mentorList[mentor].subjects.length; mentorSubject++) {
                 if(mentorList[mentor].subjects[mentorSubject] === mentee.subjects[menteeSubject]) {
                     if (cycleCounter == 0){
                         mentorList[mentor].score += 30;
@@ -231,8 +250,8 @@ function subjectMatchMentee(mentee: ScoreMentee, mentorList: ScoreMentor[]){
                     else {
                         mentorList[mentor].score += 10;
                     }
+                    cycleCounter += 1;
                 }
-                cycleCounter += 1;    
             }
         }
     }
