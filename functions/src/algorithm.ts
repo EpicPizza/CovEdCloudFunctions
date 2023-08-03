@@ -194,7 +194,7 @@ function matchMentor(mentor: ScoreMentor, mentees: ScoreMentee[]) { //similar to
 function ageMatchmakingMentee(mentee: ScoreMentee, mentorList: ScoreMentor[]){
     for(let i = 0; i < mentorList.length; i++){
         if(mentorList[i].grade_levels.includes(mentee.grade_level)) {
-            mentorList[i].score += 8;
+            mentorList[i].score += 9;
         }
     } 
 }
@@ -202,7 +202,7 @@ function ageMatchmakingMentee(mentee: ScoreMentee, mentorList: ScoreMentor[]){
 function ageMatchmakingMentor(mentor: ScoreMentor, menteeList: ScoreMentee[]){
     for(let i = 0; i < menteeList.length; i++){
         if(mentor.grade_levels.includes(menteeList[i].grade_level)) {
-            menteeList[i].score += 8;
+            menteeList[i].score += 9;
         }
     } 
 }
