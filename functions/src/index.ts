@@ -9,17 +9,25 @@
 
 import {onRequest} from "firebase-functions/v2/https";
 import * as logger from "firebase-functions/logger";
-import { Request, findMatches } from "./algorithm";
+import { Request, findMatches, generateRandomMentees, generateRandomMentors } from "./algorithm";
 
 // Start writing functions
 // https://firebase.google.com/docs/functions/typescript
 
-export const helloWorld = onRequest(async (request, response) => {
+export const match = onRequest(async (request, response) => {
     let req = Request.parse({ uid: request.body.uid, type: request.body.type });
     
     let result = await findMatches(req);
 
     logger.log(result);
 
-    response.send("Hello from Firebase!");
+    response.send(result);
+});
+
+export const generate = onRequest(async (request, response) => {
+    await generateRandomMentees();
+
+    await generateRandomMentors();
+
+    response.send("Done Generating");
 });

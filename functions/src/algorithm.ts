@@ -2,6 +2,8 @@ import dotenv from 'dotenv';
 import { z } from 'zod';
 import { firebaseAdmin } from './firebaseadmin';
 import * as logger from "firebase-functions/logger";
+import { adjectives, names, uniqueNamesGenerator } from 'unique-names-generator';
+import crypto from 'crypto';
 dotenv.config();
 
 export const Request = z.object({ //preliminary request object, not final
@@ -35,9 +37,69 @@ interface ScoreMentee extends z.infer<typeof Mentee> { //same
     score: number,
 }
 
+export async function generateRandomMentees() {
+    const db = firebaseAdmin.getFirestore();
+
+    const ref = db.collection('randomMentees');
+
+    for(let i = 0; i < 100; i++) {
+        const id = crypto.randomUUID();
+
+        var randomFirstName = uniqueNamesGenerator({
+            dictionaries: [adjectives],
+            style: "capital"
+        })
+    
+        var randomLastName = uniqueNamesGenerator({
+            dictionaries: [names],
+            style: "capital"
+        })    
+
+        ref.doc(id).set({
+            displayName: randomFirstName + " " + randomLastName,
+            partnership: (getRandom(0, 5) == 0 ? true : false),
+            subjects: getRandomSubjects(),
+            grade_level: getRandom(0, 4),
+            onboarded: false,
+            created_at: new Date(getRandom(1613152509000, 1679766909000)),
+            uid: id
+        })
+    }
+}
+
+export async function generateRandomMentors() {
+    const db = firebaseAdmin.getFirestore();
+
+    const ref = db.collection('randomMentors');
+
+    for(let i = 0; i < 100; i++) {
+        const id = crypto.randomUUID();
+
+        var randomFirstName = uniqueNamesGenerator({
+            dictionaries: [adjectives],
+            style: "capital"
+        })
+    
+        var randomLastName = uniqueNamesGenerator({
+            dictionaries: [names],
+            style: "capital"
+        })
+
+        ref.doc(id).set({
+            displayName: randomFirstName + " " + randomLastName,
+            partnership: (getRandom(0, 5) == 0 ? true : false),
+            subjects: getRandomSubjects(),
+            grade_levels: [getRandom(0, 2), getRandom(3, 4)],
+            onboarded: false,
+            created_at: new Date(getRandom(1613152509000, 1679766909000)),
+            uid: id,
+        })
+    }
+}
+
 export async function findMatches(request: z.infer<typeof Request>) { //this would be the function used in the cloud function
     if(request.type == 'Mentee') {
-        let ref = firebaseAdmin.getFirestore().collection('mentees').doc(request.uid);
+        let ref = firebaseAdmin.getFirestore().collection('randomMentees').doc(request.uid);
 
         let unparsedMentee = (await ref.get()).data();
         if(!unparsedMentee) throw new Error("Mentee Not Found");
@@ -45,7 +107,7 @@ export async function findMatches(request: z.infer<typeof Request>) { //this wou
         unparsedMentee.created_at = unparsedMentee.created_at.toDate(); //EEROREORORORORORRROOOOOR
         let mentee = Mentee.parse(unparsedMentee);
 
-        let refs = await firebaseAdmin.getFirestore().collection('mentors').listDocuments();
+        let refs = await firebaseAdmin.getFirestore().collection('randomMentors').listDocuments();
 
         let mentors = new Array<z.infer<typeof Mentor>>();
 
@@ -59,7 +121,7 @@ export async function findMatches(request: z.infer<typeof Request>) { //this wou
 
         return matchMentee(mentee as ScoreMentee, mentors as ScoreMentor[]);
     } else { //same but opposite
-        let ref = firebaseAdmin.getFirestore().collection('mentors').doc(request.uid);
+        let ref = firebaseAdmin.getFirestore().collection('randomMentors').doc(request.uid);
 
         let unparsedMentor = (await ref.get()).data();
         if(!unparsedMentor) throw new Error("Mentor Not Found");
@@ -67,7 +129,7 @@ export async function findMatches(request: z.infer<typeof Request>) { //this wou
         unparsedMentor.created_at = unparsedMentor.created_at.toDate(); //EEROREORORORORORRROOOOOR
         let mentor = Mentor.parse(unparsedMentor);
 
-        let refs = await firebaseAdmin.getFirestore().collection('mentees').listDocuments();
+        let refs = await firebaseAdmin.getFirestore().collection('randomMentees').listDocuments();
 
         let mentees = new Array<z.infer<typeof Mentee>>();
 
@@ -315,4 +377,42 @@ function waitCheckMentors(mentorList: ScoreMentor[]) { //checks how long they ha
 
         mentorList[i].score += mentorList[i].partnership == true ? (monthsWaiting == 0 ? 0 : (monthsWaiting * 0.5) + 3) : 0;
     }
+}
+
+var subjectreference = [
+    "Algebra 1",
+    "Algebra 2",
+    "Living Earth",
+    "US History",
+    "Econ",
+    "French", 
+    "English",
+    "Chemistry",
+    "Geometry",
+    "Biology",
+    "World History",
+    "Spanish",
+    "Chinese",
+    "Precalc",
+]
+
+function getRandomSubjects() {
+    var subjects = new Array();
+    
+    for(var i = 0; i < 3; i++) {
+        var randomSubjectNumber = getRandom(0, 13);
+        if(subjects.includes(subjectreference[randomSubjectNumber])) {
+            var same = randomSubjectNumber;
+            while(same == randomSubjectNumber) {
+                randomSubjectNumber = getRandom(0, 13);
+            }
+        }
+        subjects.push(subjectreference[randomSubjectNumber]);
+    }
+
+    return subjects;
+}
+
+function getRandom(min: number, max: number) {
+    return Math.floor(Math.random() * ((max + 1) - min) + min);
 }
