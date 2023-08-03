@@ -1,0 +1,142 @@
+[debug] [2023-08-03T00:05:16.846Z] ----------------------------------------------------------------------
+[debug] [2023-08-03T00:05:16.849Z] Command:       /usr/local/bin/node /Users/alejandroestrella/Documents/ProjectFiles/CovEdCloudFunctions/node_modules/.bin/firebase deploy --only functions
+[debug] [2023-08-03T00:05:16.851Z] CLI Version:   12.4.6
+[debug] [2023-08-03T00:05:16.852Z] Platform:      darwin
+[debug] [2023-08-03T00:05:16.852Z] Node Version:  v18.12.1
+[debug] [2023-08-03T00:05:16.858Z] Time:          Wed Aug 02 2023 17:05:16 GMT-0700 (Pacific Daylight Time)
+[debug] [2023-08-03T00:05:16.859Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2023-08-03T00:05:16.865Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]
+[debug] [2023-08-03T00:05:16.963Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2023-08-03T00:05:16.963Z] > authorizing via signed-in user (aqealejandro@gmail.com)
+[debug] [2023-08-03T00:05:16.963Z] [iam] checking project cov-education for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]
+[debug] [2023-08-03T00:05:16.964Z] > refreshing access token with scopes: []
+[debug] [2023-08-03T00:05:16.964Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2023-08-03T00:05:16.964Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2023-08-03T00:05:17.180Z] <<< [apiv2][status] GET https://firebase-public.firebaseio.com/cli.json 200
+[debug] [2023-08-03T00:05:17.180Z] <<< [apiv2][body] GET https://firebase-public.firebaseio.com/cli.json {"cloudBuildErrorAfter":1594252800000,"cloudBuildWarnAfter":1590019200000,"defaultNode10After":1594252800000,"minVersion":"3.0.5","node8DeploysDisabledAfter":1613390400000,"node8RuntimeDisabledAfter":1615809600000,"node8WarnAfter":1600128000000}
+[debug] [2023-08-03T00:05:17.210Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2023-08-03T00:05:17.210Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2023-08-03T00:05:17.229Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/cov-education:testIamPermissions [none]
+[debug] [2023-08-03T00:05:17.229Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/cov-education:testIamPermissions x-goog-quota-user=projects/cov-education
+[debug] [2023-08-03T00:05:17.229Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/cov-education:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2023-08-03T00:05:17.408Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/cov-education:testIamPermissions 200
+[debug] [2023-08-03T00:05:17.408Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/cov-education:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2023-08-03T00:05:17.409Z] >>> [apiv2][query] POST https://iam.googleapis.com/v1/projects/cov-education/serviceAccounts/cov-education@appspot.gserviceaccount.com:testIamPermissions [none]
+[debug] [2023-08-03T00:05:17.409Z] >>> [apiv2][body] POST https://iam.googleapis.com/v1/projects/cov-education/serviceAccounts/cov-education@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[debug] [2023-08-03T00:05:17.640Z] <<< [apiv2][status] POST https://iam.googleapis.com/v1/projects/cov-education/serviceAccounts/cov-education@appspot.gserviceaccount.com:testIamPermissions 200
+[debug] [2023-08-03T00:05:17.641Z] <<< [apiv2][body] POST https://iam.googleapis.com/v1/projects/cov-education/serviceAccounts/cov-education@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[info] 
+[info] === Deploying to 'cov-education'...
+[info] 
+[info] i  deploying functions 
+[info] Running command: npm --prefix "$RESOURCE_DIR" run build
+[info] ✔  functions: Finished running predeploy script. 
+[debug] [2023-08-03T00:05:22.230Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/cov-education [none]
+[debug] [2023-08-03T00:05:22.609Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/cov-education 200
+[debug] [2023-08-03T00:05:22.609Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/cov-education {"projectId":"cov-education","projectNumber":"181471038447","displayName":"CovEd","name":"projects/cov-education","resources":{"hostingSite":"cov-education","storageBucket":"cov-education.appspot.com","locationId":"us-central"},"state":"ACTIVE","etag":"1_0bf430b0-c498-466f-b2e0-d9ae43ff411c"}
+[info] i  functions: preparing codebase default for deployment 
+[info] i  functions: ensuring required API cloudfunctions.googleapis.com is enabled... 
+[info] i  functions: ensuring required API cloudbuild.googleapis.com is enabled... 
+[info] i  artifactregistry: ensuring required API artifactregistry.googleapis.com is enabled... 
+[debug] [2023-08-03T00:05:22.612Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/cov-education/services/cloudfunctions.googleapis.com [none]
+[debug] [2023-08-03T00:05:22.612Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/cov-education/services/cloudfunctions.googleapis.com x-goog-quota-user=projects/cov-education
+[debug] [2023-08-03T00:05:22.614Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/cov-education/services/runtimeconfig.googleapis.com [none]
+[debug] [2023-08-03T00:05:22.614Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/cov-education/services/runtimeconfig.googleapis.com x-goog-quota-user=projects/cov-education
+[debug] [2023-08-03T00:05:22.615Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/cov-education/services/cloudbuild.googleapis.com [none]
+[debug] [2023-08-03T00:05:22.615Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/cov-education/services/cloudbuild.googleapis.com x-goog-quota-user=projects/cov-education
+[debug] [2023-08-03T00:05:22.617Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/cov-education/services/artifactregistry.googleapis.com [none]
+[debug] [2023-08-03T00:05:22.617Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/cov-education/services/artifactregistry.googleapis.com x-goog-quota-user=projects/cov-education
+[debug] [2023-08-03T00:05:23.159Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/cov-education/services/runtimeconfig.googleapis.com 200
+[debug] [2023-08-03T00:05:23.159Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/cov-education/services/runtimeconfig.googleapis.com [omitted]
+[debug] [2023-08-03T00:05:23.162Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/cov-education/services/cloudfunctions.googleapis.com 200
+[debug] [2023-08-03T00:05:23.162Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/cov-education/services/cloudfunctions.googleapis.com [omitted]
+[info] ✔  functions: required API cloudfunctions.googleapis.com is enabled 
+[debug] [2023-08-03T00:05:23.182Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/cov-education/services/cloudbuild.googleapis.com 200
+[debug] [2023-08-03T00:05:23.182Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/cov-education/services/cloudbuild.googleapis.com [omitted]
+[info] ✔  functions: required API cloudbuild.googleapis.com is enabled 
+[debug] [2023-08-03T00:05:23.211Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/cov-education/services/artifactregistry.googleapis.com 200
+[debug] [2023-08-03T00:05:23.211Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/cov-education/services/artifactregistry.googleapis.com [omitted]
+[info] ✔  artifactregistry: required API artifactregistry.googleapis.com is enabled 
+[debug] [2023-08-03T00:05:23.211Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/cov-education/adminSdkConfig [none]
+[debug] [2023-08-03T00:05:23.594Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/cov-education/adminSdkConfig 200
+[debug] [2023-08-03T00:05:23.595Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/cov-education/adminSdkConfig {"projectId":"cov-education","storageBucket":"cov-education.appspot.com","locationId":"us-central"}
+[debug] [2023-08-03T00:05:23.596Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/cov-education/configs [none]
+[debug] [2023-08-03T00:05:23.931Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/cov-education/configs 200
+[debug] [2023-08-03T00:05:23.932Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/cov-education/configs {}
+[debug] [2023-08-03T00:05:23.934Z] Validating nodejs source
+[debug] [2023-08-03T00:05:24.369Z] > [functions] package.json contents: {
+  "name": "functions",
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "serve": "npm run build && firebase emulators:start --only functions",
+    "shell": "npm run build && firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "lib/index.js",
+  "dependencies": {
+    "firebase-admin": "^11.8.0",
+    "firebase-functions": "^4.3.1",
+    "unique-names-generator": "^4.7.1"
+  },
+  "devDependencies": {
+    "firebase-functions-test": "^3.1.0",
+    "typescript": "^4.9.0"
+  },
+  "private": true
+}
+[debug] [2023-08-03T00:05:24.370Z] Building nodejs source
+[info] i  functions: Loading and analyzing source code for codebase default to determine what to deploy 
+[debug] [2023-08-03T00:05:24.370Z] Could not find functions.yaml. Must use http discovery
+[debug] [2023-08-03T00:05:24.376Z] Found firebase-functions binary at '/Users/alejandroestrella/Documents/ProjectFiles/CovEdCloudFunctions/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8914
+
+[debug] [2023-08-03T00:05:26.223Z] Got response from /__/functions.yaml {"endpoints":{"match":{"availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","labels":{},"httpsTrigger":{},"entryPoint":"match"},"generate":{"availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","labels":{},"httpsTrigger":{},"entryPoint":"generate"}},"specVersion":"v1alpha1","requiredAPIs":[]}
+[info] shutdown requested via /__/quitquitquit
+
+[info] i  functions: preparing functions directory for uploading... 
+[info] i  functions: packaged /Users/alejandroestrella/Documents/ProjectFiles/CovEdCloudFunctions/functions (140.58 KB) for uploading 
+[debug] [2023-08-03T00:05:26.265Z] >>> [apiv2][query] GET https://cloudfunctions.googleapis.com/v1/projects/cov-education/locations/-/functions [none]
+[debug] [2023-08-03T00:05:26.781Z] <<< [apiv2][status] GET https://cloudfunctions.googleapis.com/v1/projects/cov-education/locations/-/functions 200
+[debug] [2023-08-03T00:05:26.781Z] <<< [apiv2][body] GET https://cloudfunctions.googleapis.com/v1/projects/cov-education/locations/-/functions {"functions":[{"name":"projects/cov-education/locations/us-west2/functions/ext-firestore-send-email-processQueue","description":"Processes document changes in the specified Cloud Firestore collection, delivers emails, and updates the document with delivery status information.","sourceArchiveUrl":"gs://firebase-mod-sources-prod/fe71b78d37fc16b0de2f907f26b256ce4df473ca3f26ec8998de9784c0b4566c","eventTrigger":{"eventType":"providers/cloud.firestore/eventTypes/document.write","resource":"projects/cov-education/databases/(default)/documents/mail/{id}","service":"firestore.googleapis.com","failurePolicy":{}},"status":"ACTIVE","entryPoint":"processQueue","timeout":"60s","availableMemoryMb":256,"serviceAccountEmail":"ext-firestore-send-email@cov-education.iam.gserviceaccount.com","updateTime":"2023-07-22T17:51:22.274Z","versionId":"2","labels":{"firebase-extensions-ar":"enabled","goog-dm":"firebase-ext-firestore-send-email","goog-firebase-ext":"firestore-send-email","deployment-tool":"firebase-extensions","goog-firebase-ext-iid":"firestore-send-email"},"environmentVariables":{"DATABASE_INSTANCE":"","DATABASE_URL":"","DEFAULT_FROM":"tech@coved.org","EXT_INSTANCE_ID":"firestore-send-email","FIREBASE_CONFIG":"{\"projectId\":\"cov-education\",\"databaseURL\":\"\",\"storageBucket\":\"cov-education.appspot.com\"}","GCLOUD_PROJECT":"cov-education","LOCATION":"us-west2","MAIL_COLLECTION":"mail","PROJECT_ID":"cov-education","SMTP_CONNECTION_URI":"smtps://tech@coved.org@smtp.gmail.com:465","STORAGE_BUCKET":"cov-education.appspot.com","TTL_EXPIRE_TYPE":"never","TTL_EXPIRE_VALUE":"1"},"runtime":"nodejs18","maxInstances":3000,"ingressSettings":"ALLOW_INTERNAL_ONLY","buildId":"46fea054-deb2-443a-8a19-f19a776006e5","buildEnvironmentVariables":{"GOOGLE_NODE_RUN_SCRIPTS":""},"secretEnvironmentVariables":[{"key":"SMTP_PASSWORD","projectId":"181471038447","secret":"firestore-send-email-SMTP_PASSWORD","version":"1"}],"buildName":"projects/181471038447/locations/us-west2/builds/46fea054-deb2-443a-8a19-f19a776006e5","dockerRegistry":"ARTIFACT_REGISTRY"}]}
+[debug] [2023-08-03T00:05:26.782Z] >>> [apiv2][query] GET https://cloudfunctions.googleapis.com/v2/projects/cov-education/locations/-/functions filter=environment%3D%22GEN_2%22
+[debug] [2023-08-03T00:05:27.254Z] <<< [apiv2][status] GET https://cloudfunctions.googleapis.com/v2/projects/cov-education/locations/-/functions 200
+[debug] [2023-08-03T00:05:27.254Z] <<< [apiv2][body] GET https://cloudfunctions.googleapis.com/v2/projects/cov-education/locations/-/functions {}
+[info] i  functions: ensuring required API run.googleapis.com is enabled... 
+[info] i  functions: ensuring required API eventarc.googleapis.com is enabled... 
+[info] i  functions: ensuring required API pubsub.googleapis.com is enabled... 
+[info] i  functions: ensuring required API storage.googleapis.com is enabled... 
+[debug] [2023-08-03T00:05:27.255Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/cov-education/services/run.googleapis.com [none]
+[debug] [2023-08-03T00:05:27.255Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/cov-education/services/run.googleapis.com x-goog-quota-user=projects/cov-education
+[debug] [2023-08-03T00:05:27.256Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/cov-education/services/eventarc.googleapis.com [none]
+[debug] [2023-08-03T00:05:27.256Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/cov-education/services/eventarc.googleapis.com x-goog-quota-user=projects/cov-education
+[debug] [2023-08-03T00:05:27.257Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/cov-education/services/pubsub.googleapis.com [none]
+[debug] [2023-08-03T00:05:27.257Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/cov-education/services/pubsub.googleapis.com x-goog-quota-user=projects/cov-education
+[debug] [2023-08-03T00:05:27.258Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/cov-education/services/storage.googleapis.com [none]
+[debug] [2023-08-03T00:05:27.258Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/cov-education/services/storage.googleapis.com x-goog-quota-user=projects/cov-education
+[debug] [2023-08-03T00:05:27.739Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/cov-education/services/run.googleapis.com 200
+[debug] [2023-08-03T00:05:27.739Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/cov-education/services/run.googleapis.com [omitted]
+[warn] ⚠  functions: missing required API run.googleapis.com. Enabling now... 
+[debug] [2023-08-03T00:05:27.740Z] >>> [apiv2][query] POST https://serviceusage.googleapis.com/v1/projects/cov-education/services/run.googleapis.com:enable [none]
+[debug] [2023-08-03T00:05:27.740Z] >>> [apiv2][(partial)header] POST https://serviceusage.googleapis.com/v1/projects/cov-education/services/run.googleapis.com:enable x-goog-quota-user=projects/cov-education
+[debug] [2023-08-03T00:05:27.764Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/cov-education/services/eventarc.googleapis.com 200
+[debug] [2023-08-03T00:05:27.764Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/cov-education/services/eventarc.googleapis.com [omitted]
+[warn] ⚠  functions: missing required API eventarc.googleapis.com. Enabling now... 
+[debug] [2023-08-03T00:05:27.764Z] >>> [apiv2][query] POST https://serviceusage.googleapis.com/v1/projects/cov-education/services/eventarc.googleapis.com:enable [none]
+[debug] [2023-08-03T00:05:27.764Z] >>> [apiv2][(partial)header] POST https://serviceusage.googleapis.com/v1/projects/cov-education/services/eventarc.googleapis.com:enable x-goog-quota-user=projects/cov-education
+[debug] [2023-08-03T00:05:27.771Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/cov-education/services/pubsub.googleapis.com 200
+[debug] [2023-08-03T00:05:27.771Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/cov-education/services/pubsub.googleapis.com [omitted]
+[info] ✔  functions: required API pubsub.googleapis.com is enabled 
+[debug] [2023-08-03T00:05:27.773Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/cov-education/services/storage.googleapis.com 200
+[debug] [2023-08-03T00:05:27.773Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/cov-education/services/storage.googleapis.com [omitted]
+[info] ✔  functions: required API storage.googleapis.com is enabled 
+[debug] [2023-08-03T00:05:28.721Z] <<< [apiv2][status] POST https://serviceusage.googleapis.com/v1/projects/cov-education/services/run.googleapis.com:enable 200
+[debug] [2023-08-03T00:05:28.721Z] <<< [apiv2][body] POST https://serviceusage.googleapis.com/v1/projects/cov-education/services/run.googleapis.com:enable [omitted]
+[debug] [2023-08-03T00:05:28.784Z] <<< [apiv2][status] POST https://serviceusage.googleapis.com/v1/projects/cov-education/services/eventarc.googleapis.com:enable 200
+[debug] [2023-08-03T00:05:28.784Z] <<< [apiv2][body] POST https://serviceusage.googleapis.com/v1/projects/cov-education/services/eventarc.googleapis.com:enable [omitted]
