@@ -1,10 +1,8 @@
-import dotenv from 'dotenv';
 import { z } from 'zod';
 import { firebaseAdmin } from './firebaseadmin';
 import * as logger from "firebase-functions/logger";
 import { adjectives, names, uniqueNamesGenerator } from 'unique-names-generator';
 import crypto from 'crypto';
-dotenv.config();
 
 export const Request = z.object({ //preliminary request object, not final
     uid: z.string().min(1).max(100),

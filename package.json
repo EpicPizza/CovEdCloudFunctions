@@ -4,8 +4,9 @@
   "description": "",
   "main": "src/index.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon src/index.ts"
+    "dev": "firebase emulators:start",
+    "delete": "firebase functions:delete match && firebase functions:delete generate",
+    "deploy": "firebase deploy --only functions"
   },
   "author": "",
   "license": "ISC",
