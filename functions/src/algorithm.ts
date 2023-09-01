@@ -11,18 +11,18 @@ export const Request = z.object({ //preliminary request object, not final
 
 const Mentee = z.object({ //not necessarily everything, just all the stuff i need for the matching algorithm
     partnership: z.coerce.boolean(),
-    grade_level: z.number().int().min(0).max(4),
+    gradeLevel: z.number().int().min(0).max(4),
     subjects: z.string().array(),
-    created_at: z.date(),
+    createdAt: z.coerce.date(),
     onboarded: z.boolean(),
     uid: z.string(),
 })
 
 const Mentor = z.object({ //same thing
     partnership: z.coerce.boolean(),
-    grade_levels: z.number().int().min(0).max(4).array(),
+    gradeLevels: z.number().int().min(0).max(4).array(),
     subjects: z.string().array(),
-    created_at: z.date(),
+    createdAt: z.coerce.date(),
     onboarded: z.boolean(),
     uid: z.string(),
 })
@@ -57,9 +57,9 @@ export async function generateRandomMentees() {
             displayName: randomFirstName + " " + randomLastName,
             partnership: (getRandom(0, 5) == 0 ? true : false),
             subjects: getRandomSubjects(),
-            grade_level: getRandom(0, 4),
+            gradeLevel: getRandom(0, 4),
             onboarded: false,
-            created_at: new Date(getRandom(1613152509000, 1679766909000)),
+            createdAt: new Date(getRandom(1613152509000, 1679766909000)),
             uid: id
         })
     }
@@ -87,9 +87,9 @@ export async function generateRandomMentors() {
             displayName: randomFirstName + " " + randomLastName,
             partnership: (getRandom(0, 5) == 0 ? true : false),
             subjects: getRandomSubjects(),
-            grade_levels: [getRandom(0, 2), getRandom(3, 4)],
+            gradeLevels: [getRandom(0, 2), getRandom(3, 4)],
             onboarded: false,
-            created_at: new Date(getRandom(1613152509000, 1679766909000)),
+            createdAt: new Date(getRandom(1613152509000, 1679766909000)),
             uid: id,
         })
     }
@@ -97,15 +97,23 @@ export async function generateRandomMentors() {
 
 export async function findMatches(request: z.infer<typeof Request>) { //this would be the function used in the cloud function
     if(request.type == 'Mentee') {
-        let ref = firebaseAdmin.getFirestore().collection('randomMentees').doc(request.uid);
+        const start = new Date();
+
+        let ref = firebaseAdmin.getFirestore().collection('mentees').doc(request.uid);
 
         let unparsedMentee = (await ref.get()).data();
         if(!unparsedMentee) throw new Error("Mentee Not Found");
         unparsedMentee.uid = ref.id; //put it in before parsing, otherwise zod will throw error.
-        unparsedMentee.created_at = unparsedMentee.created_at.toDate(); //EEROREORORORORORRROOOOOR
-        let mentee = Mentee.parse(unparsedMentee);
+        let mentee;
+        try {
+            mentee = Mentee.parse(unparsedMentee);
+        } catch(e: any) {
+            logger.log(e);
+            throw new Error(`Unable to parse mentee ${unparsedMentee.uid}. Error: ${e.message}`);
+        }
+        
 
-        let refs = await firebaseAdmin.getFirestore().collection('randomMentors').listDocuments();
+        let refs = await firebaseAdmin.getFirestore().collection('mentors').listDocuments();
 
         let mentors = new Array<z.infer<typeof Mentor>>();
 
@@ -113,21 +121,36 @@ export async function findMatches(request: z.infer<typeof Request>) { //this wou
             let unparsedMentor = (await refs[i].get()).data();
             if(!unparsedMentor) throw new Error("Mentor Not Found");
             unparsedMentor.uid = refs[i].id;
-            unparsedMentor.created_at = unparsedMentor.created_at.toDate(); //EEROREORORORORORRROOOOOR
-            mentors.push(Mentor.parse(unparsedMentor));
+
+            try {
+                mentors.push(Mentor.parse(unparsedMentor));
+            } catch(e: any) {
+                logger.log(e);
+                throw new Error(`Unable to parse mentor ${unparsedMentor.uid}. Error: ${e.message}`);
+            }
         }
+
+        logger.log(`Took ${new Date().valueOf() - start.valueOf()} milliseconds to parse.`);
 
         return matchMentee(mentee as ScoreMentee, mentors as ScoreMentor[]);
     } else { //same but opposite
-        let ref = firebaseAdmin.getFirestore().collection('randomMentors').doc(request.uid);
+        const start = new Date();
+
+        let ref = firebaseAdmin.getFirestore().collection('mentors').doc(request.uid);
 
         let unparsedMentor = (await ref.get()).data();
         if(!unparsedMentor) throw new Error("Mentor Not Found");
         unparsedMentor.uid = ref.id;
-        unparsedMentor.created_at = unparsedMentor.created_at.toDate(); //EEROREORORORORORRROOOOOR
-        let mentor = Mentor.parse(unparsedMentor);
 
-        let refs = await firebaseAdmin.getFirestore().collection('randomMentees').listDocuments();
+        let mentor;
+        try {
+            mentor = Mentor.parse(unparsedMentor);
+        } catch(e: any) {
+            logger.log(e);
+            throw new Error(`Unable to parse mentor ${unparsedMentor.uid}. Error: ${e.message}`);
+        }
+
+        let refs = await firebaseAdmin.getFirestore().collection('mentees').listDocuments();
 
         let mentees = new Array<z.infer<typeof Mentee>>();
 
@@ -135,11 +158,18 @@ export async function findMatches(request: z.infer<typeof Request>) { //this wou
             let unparsedMentee = (await refs[i].get()).data();
             if(!unparsedMentee) throw new Error("Mentor Not Found");
             unparsedMentee.uid = refs[i].id;
-            unparsedMentee.created_at = unparsedMentee.created_at.toDate(); //EEROREORORORORORRROOOOOR
-            mentees.push(Mentee.parse(unparsedMentee));
+
+            try {
+                mentees.push(Mentee.parse(unparsedMentee));
+            } catch(e:any) {
+                logger.log(e);
+                throw new Error(`Unable to parse mentee ${unparsedMentee.uid}. Error: ${e.message}`);
+            }
         }
 
         logger.log("Done Parsing");
+
+        logger.log(`Took ${new Date().valueOf() - start.valueOf()} milliseconds to parse.`);
 
         return matchMentor(mentor as ScoreMentor, mentees as ScoreMentee[]);
     }
@@ -253,7 +283,7 @@ function matchMentor(mentor: ScoreMentor, mentees: ScoreMentee[]) { //similar to
 
 function ageMatchmakingMentee(mentee: ScoreMentee, mentorList: ScoreMentor[]){
     for(let i = 0; i < mentorList.length; i++){
-        if(mentorList[i].grade_levels.includes(mentee.grade_level)) {
+        if(mentorList[i].gradeLevels.includes(mentee.gradeLevel)) {
             mentorList[i].score += 9;
         }
     } 
@@ -261,7 +291,7 @@ function ageMatchmakingMentee(mentee: ScoreMentee, mentorList: ScoreMentor[]){
 
 function ageMatchmakingMentor(mentor: ScoreMentor, menteeList: ScoreMentee[]){
     for(let i = 0; i < menteeList.length; i++){
-        if(mentor.grade_levels.includes(menteeList[i].grade_level)) {
+        if(mentor.gradeLevels.includes(menteeList[i].gradeLevel)) {
             menteeList[i].score += 9;
         }
     } 
@@ -339,7 +369,7 @@ function splitUnmatchedMentees(mentees: ScoreMentee[]): ScoreMentee[] {
 
 function waitCheckMentees(menteeList: ScoreMentee[]) { //checks how long they have waited (weights different based on partnership)
     for(let i = 0; i < menteeList.length; i++) {
-        let timeWaiting = new Date(new Date().valueOf() - menteeList[i].created_at.valueOf());
+        let timeWaiting = new Date(new Date().valueOf() - menteeList[i].createdAt.valueOf());
 
         let weeksWaiting = 0;
 
@@ -363,7 +393,7 @@ function waitCheckMentees(menteeList: ScoreMentee[]) { //checks how long they ha
 
 function waitCheckMentors(mentorList: ScoreMentor[]) { //checks how long they have waited (weights different based on partnership)
     for(let i = 0; i < mentorList.length; i++) {
-        let timeWaiting = new Date(new Date().valueOf() - mentorList[i].created_at.valueOf());
+        let timeWaiting = new Date(new Date().valueOf() - mentorList[i].createdAt.valueOf());
 
         let monthsWaiting = 0;
 
