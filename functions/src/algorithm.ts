@@ -11,19 +11,17 @@ export const Request = z.object({ //preliminary request object, not final
 
 const Mentee = z.object({ //not necessarily everything, just all the stuff i need for the matching algorithm
     partnership: z.coerce.boolean(),
-    gradeLevel: z.number().int().min(0).max(4),
+    gradeLevel: z.number().int().min(0).max(13),
     subjects: z.string().array(),
     createdAt: z.coerce.date(),
-    onboarded: z.boolean(),
     uid: z.string(),
 })
 
 const Mentor = z.object({ //same thing
     partnership: z.coerce.boolean(),
-    gradeLevels: z.number().int().min(0).max(4).array(),
+    gradeLevels: z.number().int().min(0).max(13).array(),
     subjects: z.string().array(),
     createdAt: z.coerce.date(),
-    onboarded: z.boolean(),
     uid: z.string(),
 })
 
@@ -184,7 +182,7 @@ function matchMentee(mentee: ScoreMentee, mentors: ScoreMentor[]) {
 
     logger.log("Reseted Score");
 
-    let unmatchedMentors = splitUnmatchedMentors(mentors); //for now just disregarding onboarded members, we should discuss this behavior.
+    let unmatchedMentors = [...mentors]; //for now just disregarding onboarded members, we should discuss this behavior.
 
     logger.log("Split mentors");
 
@@ -236,7 +234,7 @@ function matchMentor(mentor: ScoreMentor, mentees: ScoreMentee[]) { //similar to
 
     logger.log("Reseted Score");
 
-    let unmatchedMentees = splitUnmatchedMentees(mentees);
+    let unmatchedMentees = [...mentees];
 
     logger.log(unmatchedMentees.length);
 
@@ -347,7 +345,7 @@ function subjectMatchMentee(mentee: ScoreMentee, mentorList: ScoreMentor[]){
     }
 }
 
-function splitUnmatchedMentors(mentors: ScoreMentor[]): ScoreMentor[] {
+/*function splitUnmatchedMentors(mentors: ScoreMentor[]): ScoreMentor[] {
     let filtered = new Array<ScoreMentor>();
     for(let i = 0; i < mentors.length; i++) {
         if(mentors[i].onboarded == false) {
@@ -365,7 +363,7 @@ function splitUnmatchedMentees(mentees: ScoreMentee[]): ScoreMentee[] {
         }
     }
     return filtered;
-}
+}*/
 
 function waitCheckMentees(menteeList: ScoreMentee[]) { //checks how long they have waited (weights different based on partnership)
     for(let i = 0; i < menteeList.length; i++) {

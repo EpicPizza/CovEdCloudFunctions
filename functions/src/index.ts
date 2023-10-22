@@ -7,14 +7,30 @@
  * See a full list of supported triggers at https://firebase.google.com/docs/functions
  */
 
-import {onRequest} from "firebase-functions/v2/https";
+import { Request as FirebaseRequest, onRequest} from "firebase-functions/v2/https";
 import * as logger from "firebase-functions/logger";
 import { Request, findMatches } from "./algorithm";
 
 // Start writing functions
-// https://firebase.google.com/docs/functions/typescript
+
+function handleCors(request: FirebaseRequest, response: any): boolean {
+    response.set('Access-Control-Allow-Origin', '*');
+
+    if (request.method === 'OPTIONS') {
+        response.set('Access-Control-Allow-Methods', 'POST');
+        response.set('Access-Control-Allow-Headers', 'Content-Type');
+        response.set('Access-Control-Max-Age', '3600');
+        response.status(204).send('');
+
+        return true;
+    } else {
+        return false
+    }
+}
 
 export const match = onRequest(async (request, response) => {
+    if(handleCors(request, response)) return;
+
     let req;
 
     try {
@@ -33,7 +49,7 @@ export const match = onRequest(async (request, response) => {
     } catch(e: any) {
         console.log(e);
 
-        if('message' in e && typeof e.message == 'string' && e.message.startsWith('Unable to parse')) {
+        if('message' in e && typeof e.message == 'string' && (e.message.startsWith('Unable to parse') || e.message.includes('Not Found'))) {
             response.status(400).send(e.message);
         } else {
             response.status(500).end();
